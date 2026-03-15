@@ -1,4 +1,5 @@
 from flask import Flask ,render_template, request, redirect, session, url_for
+from flask import send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import  psycopg2
@@ -151,7 +152,10 @@ def certificates():
     conn.close()
     print(certs)
     return render_template("certificates.html", certs = certs)
-
+# route to serve uploaded files
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 # logout route-
 @app.route("/logout")
 def logout():
