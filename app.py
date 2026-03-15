@@ -133,6 +133,25 @@ def upload():
         return "File uploaded successfully"
     return render_template("upload.html")
 
+
+# view certificates route
+@app.route("/certificates")
+def certificates():
+    if "user_id" not in session:
+        return redirect("/login")
+    user_id = session["user_id"]
+    print("SESSION USER:", user_id)
+    conn = get_db_connection()
+    curr = conn.cursor()
+    # fetch data based on user_id entered. 
+    curr.execute("select id, title, certificate_url from certificates")
+
+    certs = curr.fetchall()
+    curr.close()
+    conn.close()
+    print(certs)
+    return render_template("certificates.html", certs = certs)
+
 # logout route-
 @app.route("/logout")
 def logout():

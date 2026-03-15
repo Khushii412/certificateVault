@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>certificate page</title>
+    </head>
+    <body>
+        <h1>MY CERTIFICATES </h1>
+        <ul>
+            {% for cert in certs%}
+                <li>
+                    <strong>{{ cert[1]}} </strong>
+                    <br><br>
+                    file : {{cert[2]}}
+                </li>
+                <br>
+            {% endfor %}
+            </ul><br>
+            <a href="/dashboard">Back to dashboard</a>
+        </body>
+    </html>
+    
+    {# for cert in certs %} {% for cert in certs %}#}
+    {#certs came from the backend:#}
+    {#cert[0] → id#}
+    {#cert[1] → title#}
+    {#cert[2] → certificate_url#}
