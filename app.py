@@ -153,6 +153,8 @@ def certificates():
     print(certs)
     return render_template("certificates.html", certs = certs)
 # delete route
+
+
 print("Delete route loaded")
 @app.route('/delete/<int:id>')
 def delete_certificate(id):
@@ -185,9 +187,13 @@ def delete_certificate(id):
     
 
 # route to serve uploaded files
-@app.route("/uploads/<filename>")
+
+# view certificate(bring cert from directory to view)
+@app.route('/uploadedFile/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
+
+
 # logout route-
 @app.route("/logout")
 def logout():
