@@ -11,7 +11,11 @@
                     <strong>{{ cert[1]}} </strong>
                     <br><br>
                     file : {{cert[2]}}
-                </li>
+                    <br><br>
+                    <a href = "/delete/{{ cert[0]}}">
+                        <button>Delete</button>
+                    </a>
+                    </li>
                 <br>
             {% endfor %}
             </ul><br>

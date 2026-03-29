@@ -152,6 +152,38 @@ def certificates():
     conn.close()
     print(certs)
     return render_template("certificates.html", certs = certs)
+# delete route
+print("Delete route loaded")
+@app.route('/delete/<int:id>')
+def delete_certificate(id):
+    print("route hit")
+    conn= get_db_connection()
+    cur = conn.cursor()
+    # get file name first to delete certificate
+    cur.execute("select * from certificates where id = %s", (id,))
+
+    file = cur.fetchone()
+    print("tying to delete id", id)
+    print("file fetched", file)
+    if file:
+        import os
+        filename = file[5]
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+        # delete file from folder
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        # delete from DB
+        print("about to delete from databse")
+        cur.execute("delete from certificates where id = %s", (id,))
+        print("rows deleted", cur.rowcount)
+        conn.commit()
+        print("DB delete committed")
+    cur.close()
+    conn.close()
+    return redirect('/certificates')
+    
+
 # route to serve uploaded files
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
