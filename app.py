@@ -15,6 +15,7 @@ app.secret_key = "supersecretkey123"
 DATABASE_URL = os.getenv("DATABASE_URL")
 #print("DATABASE_URL:", DATABASE_URL)
 
+
 def get_db_connection():
     conn = psycopg2.connect(DATABASE_URL)
     return conn
@@ -193,7 +194,22 @@ def delete_certificate(id):
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
-
+# edit route
+print("edit route")
+@app.route('/edit/<int:id>')
+def edit_route(id):
+    
+    print("session :", session)
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect('/login')
+    con = get_db_connection()
+    cur = con.cursor()
+    cur.execute('select * from certificates where id = %s and user_id = %s',(id,user_id))
+    cert = cur.fetchone()
+    cur.close()
+    con.close()
+    return render_template('edit_certificates.html', cert=cert)
 # logout route-
 @app.route("/logout")
 def logout():
