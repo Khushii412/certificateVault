@@ -18,9 +18,12 @@
                                 </p>
 
                                 <a href="/uploadedFile/{{cert[2]}}" class="btn btn-primary btn-sm" target="_blank">View</a>
+                                {# _blank is used to open file in new page in browser#}
                                 <a href ="/delete/{{ cert[0]}}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete?');">
                                     Delete
                                 </a>
+
+                            <a href = '/edit/{{cert[0]}}' class="btn btn-secondary btn-sm">Edit</a>
                             
                             <br>
                         </div>

@@ -195,10 +195,9 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
 # edit route
-print("edit route")
+
 @app.route('/edit/<int:id>')
-def edit_route(id):
-    
+def edit_certificate(id): 
     print("session :", session)
     user_id = session.get('user_id')
     if not user_id:
@@ -207,9 +206,30 @@ def edit_route(id):
     cur = con.cursor()
     cur.execute('select * from certificates where id = %s and user_id = %s',(id,user_id))
     cert = cur.fetchone()
+    print("cert data", cert)
     cur.close()
     con.close()
     return render_template('edit_certificates.html', cert=cert)
+
+# update route
+@app.route('/update/<int:id>', methods=['POST'])
+def update_certificate(id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect('/login')
+    # get form data
+    title = request.form['title']
+    issuer = request.form['issuer']
+    issue_date =request.form['issue_date']
+    if not issue_date:
+        issue_date = None
+    con = get_db_connection()
+    cur = con.cursor()
+    cur.execute('update certificates set title= %s , issuer = %s, issue_date=%s where id = %s and user_id = %s', (title, issuer, issue_date, id, user_id))
+    con.commit()
+    cur.close()
+    con.close()
+    return redirect('/certificates')
 # logout route-
 @app.route("/logout")
 def logout():
