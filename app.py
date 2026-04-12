@@ -1,5 +1,5 @@
 from flask import Flask ,render_template, request, redirect, session, url_for
-from flask import send_from_directory
+from flask import send_from_directory,flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import  psycopg2
@@ -23,6 +23,7 @@ def get_db_connection():
 @app.route("/")
 def home():
     try:
+        
         conn = get_db_connection()
     
         cur = conn.cursor()
@@ -146,7 +147,7 @@ def certificates():
     conn = get_db_connection()
     curr = conn.cursor()
     # fetch data based on user_id entered. 
-    curr.execute("select id, title, certificate_url from certificates")
+    curr.execute("select id, title, certificate_url from certificates where user_id=%s", (user_id,))
 
     certs = curr.fetchall()
     curr.close()
@@ -159,7 +160,7 @@ def certificates():
 print("Delete route loaded")
 @app.route('/delete/<int:id>')
 def delete_certificate(id):
-    print("route hit")
+    user_id = session['user_id']
     conn= get_db_connection()
     cur = conn.cursor()
     # get file name first to delete certificate
@@ -178,12 +179,13 @@ def delete_certificate(id):
             os.remove(file_path)
         # delete from DB
         print("about to delete from databse")
-        cur.execute("delete from certificates where id = %s", (id,))
+        cur.execute("delete from certificates where id = %s and user_id= %s", (id, user_id,))
         print("rows deleted", cur.rowcount)
         conn.commit()
         print("DB delete committed")
     cur.close()
     conn.close()
+    flash("Certificate deleted successfully", "danger")
     return redirect('/certificates')
     
 
@@ -202,11 +204,15 @@ def edit_certificate(id):
     user_id = session.get('user_id')
     if not user_id:
         return redirect('/login')
+    print("user", user_id)
+    print("id", id)
     con = get_db_connection()
     cur = con.cursor()
-    cur.execute('select * from certificates where id = %s and user_id = %s',(id,user_id))
+    cur.execute('select * from certificates where user_id = %s',(user_id,))
     cert = cur.fetchone()
     print("cert data", cert)
+    if not cert:
+        flash("Certificate not found or unauthorized access", "danger")
     cur.close()
     con.close()
     return render_template('edit_certificates.html', cert=cert)
@@ -229,7 +235,15 @@ def update_certificate(id):
     con.commit()
     cur.close()
     con.close()
+    flash("Certificate updated successfully", "Success")
     return redirect('/certificates')
+
+
+@app.route('/test')
+def test_session():
+    session['test'] = "working"
+    return "session set"
+
 # logout route-
 @app.route("/logout")
 def logout():

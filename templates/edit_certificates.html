@@ -8,6 +8,7 @@
             
                 <h2 class="text-center mb-4">Edit Certificate</h2>
                 <form method="POST" action='/update/{{cert[0]}}' class="card p-4 shadow-sm">
+                    <p>ID: {{ cert }}</p>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Title</label>
                         <input type="text" name="title" class="form-control" value="{{cert[2]}}" required>
