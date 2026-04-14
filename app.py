@@ -239,10 +239,16 @@ def update_certificate(id):
     return redirect('/certificates')
 
 
-@app.route('/test')
-def test_session():
-    session['test'] = "working"
-    return "session set"
+# download route
+@app.route('/download/<filename>')
+def download_file(filename):
+    folder = app.config['UPLOAD_FOLDER']
+    return send_from_directory(folder, filename, as_attachment = True)
+
+#view route
+@app.route('/view/<filename>')
+def view_file(filename):
+    return render_template('view_file.html', filename=filename)
 
 # logout route-
 @app.route("/logout")
